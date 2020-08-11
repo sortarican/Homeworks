@@ -17,18 +17,6 @@ function createFeatures(eqData) {
     
     //array for markers
     var eqMarkers = [];
-
-    // loop through eqData and append to eqMarkers
-    // for (var i = 0; i < eqData.length; i++) {
-    //     // set marker radius, passing mag into the markerSize function
-    //     eqMarkers.push(
-    //     L.circleMarker(eqData[i].geometry.coordinates, {
-    //         stroke: false,
-    //         color: '#ff9033',
-    //         radius: markerSize(eqData[i].properties.mag)
-    //     })
-    //     );
-    // }
     
     // EQ layer to createMap function
     createMap(earthquakes, eqData);
@@ -45,12 +33,12 @@ function createFeatures(eqData) {
             accessToken: API_KEY
         });
 
-        // var darkMap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        //     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        //     maxZoom: 18,
-        //     id: "dark-v10",
-        //     accessToken: API_KEY
-        // });
+        var darkMap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+            maxZoom: 18,
+            id: "dark-v10",
+            accessToken: API_KEY
+        });
        
         console.log(eqMarkers)
 
@@ -59,7 +47,7 @@ function createFeatures(eqData) {
         // def baseMaps obj to hold base layers
         var baseMaps = {
             "Street Map": streetMap,
-            // "Dark Map": darkMap
+            "Dark Map": darkMap
         };
 
         // def overlay object to hold overlay layer
@@ -73,32 +61,31 @@ function createFeatures(eqData) {
             center: [
                 37.09, -100.71
             ],
-            zoom: 5,
-            layers: [streetMap, mkrLayer, earthquakes]
+            zoom: 3,
+            layers: [darkMap, mkrLayer, earthquakes]
         });
 
         // marker size based on magnitude
         function markerSize(mag) {
-        return mag * 20000;
+        return mag * 23232;
         }
 
-        // Loop through eqData
+        // Loop through eqData, adj geojson coordinates array to fit library
         for (var i = 0; i < eqData.length; i++) {
             L.circle(eqData[i].geometry.coordinates.slice(0,2).reverse(), {
             fillOpacity: 0.75,
-            color: "white",
+            color: "purple",
             fillColor: "purple",
-            // Setting our circle's radius equal to the output of our markerSize function
-            // This will make our marker's size proportionate to its population
+            // setting circle's radius equal to output of markerSize function, i.e.magnitude
             radius: markerSize(eqData[i].properties.mag)
-            }).addTo(myMap)//.bindPopup("<h1>" + eqData[i].properties.place + "</h1> <hr> <h3>Population: " + eqData[i].properties.mag + "</h3>").addTo(myMap);
+            }).addTo(myMap);
         }
         
         console.log(eqData[1].geometry.coordinates.slice(0,2))
 
         // Create a layer control
         // Pass in baseMaps and overlayMaps
-        // Add layer control to map
+        // Add layer control to myMap
         L.control.layers(baseMaps, overlayMaps, {
             collapsed: false
         }).addTo(myMap);
